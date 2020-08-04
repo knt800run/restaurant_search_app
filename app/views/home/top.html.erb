@@ -3,11 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>RestaurantSearchApp</title>
 </head>
 <body>
+  <script>
+    
+    const getGeolocation = ()=>{
+      if (navigator.geolocation) {
+        // 現在の位置情報取得を実施
+        navigator.geolocation.getCurrentPosition(
+        // 位置情報取得成功時
+        function (pos) { 
+          //現在地の経度,緯度を取得
+          var lat = pos.coords.latitude;
+          var lng = pos.coords.longitude;
+          //ぐるなびapiを叩く
+          var req = new XMLHttpRequest();
+          //検索半径
+          var range = document.forms.mainform.elements['range'].value;
+
+          var freeword = document.forms.mainform.elements['freeword'].value;
+
+          url = `https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=7ac4302e8825cede67d095564843bf46&latitude=${lat}&longitude=${lng}&range=${range}&freeword=${freeword}`
+
+          req.responseType = 'json'
+
+          req.open('GET', url, true);
+              
+          req.onload = ()=>{
+            if(req.status==404){
+              var li = document.createElement('li');
+              document.getElementById("result").appendChild(li).innerHTML = `<li>検索結果がありません</li><br>`;
+            }else{
+              //周辺10件の店の名前を表示する
+              req.response.rest.forEach((value)=>{
+                var li = document.createElement('li');
+                li.classList.add("border","list-group","border-info","w-50","mt-3","mx-auto","rounded");
+                document.getElementById("result").appendChild(li).innerHTML = `<li style="display:inline"><h5>${value.name}</h5><br><img src=${value.image_url.shop_image1}><br>${value.access.walk}分<br>${value.opentime}<br>${value.address}<br><a href="tel:${value.tel}">${value.tel}</a></li>`;
+                console.log(value.name);
+              });
+            }
+          };
+
+          req.send();
+
+
+        },
+        // 位置情報取得失敗時
+        function (pos) { 
+                var result ="<li>位置情報が取得できませんでした。</li>";
+                document.getElementById("result").innerHTML = result;
+        });
+      } else {
+        window.alert("本ブラウザではGeolocationが使えません");
+      }
+    }
+  </script>
   <div class="container">
-    <h1>これはRestaurountSearchAPPです</h1>
+  
+
+  <%# main %>
+    <div class="main text-center m-auto">
+      <h1 class="mb-3">レストラン検索</h1>
+      <form name="mainform" method="GET" class="mb-3">
+        検索半径
+        <select id="range" class="form-control-sm">
+          <option value="1">300m</option>
+          <option value="2">500m</option>
+          <option value="3">1000m</option>
+          <option value="4">2000m</option>
+          <option value="5">3000m</option>
+        </select>
+        キーワード
+        <input type="text" id="freeword">
+      </form>
+      <button class="text-center btn btn-outline-info mb-3" onclick="getGeolocation()">検索</button>
+      <ul id="result" class="list-unstyled list-group m-auto">
+      </ul>
+    </div>
+
+  <%# footer %>
+    <footer class="text-center mt-5 mb-3" style="height:60px">
+      Supported by <a href="https://api.gnavi.co.jp/api/scope/" target="_blank">ぐるなびWebService</a>
+    </footer>
   </div>
 </body>
 </html>
