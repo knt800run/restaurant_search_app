@@ -39,7 +39,7 @@
               req.response.rest.forEach((value)=>{
                 var li = document.createElement('li');
                 li.classList.add("border","list-group","border-info","w-75","mt-3","mx-auto","rounded");
-                document.getElementById("result").appendChild(li).innerHTML = `<li style="display:inline;line-height:40px"><h5>${value.name}</h5><br><img src=${value.image_url.shop_image1}><br>${value.access.walk}分<br>${value.opentime}<br>${value.address}<br><a href="tel:${value.tel}">${value.tel}</a></li>`;
+                document.getElementById("result").appendChild(li).innerHTML = `<li style="display:inline;line-height:40px"><h4 class="pt-3">${value.name}</h4><br><img src=${value.image_url.shop_image1}><br>${value.access.walk}分<br>${value.opentime}<br>${value.address}<br><a href="tel:${value.tel}">${value.tel}</a></li>`;
                 console.log(value.name);
               });
             }
