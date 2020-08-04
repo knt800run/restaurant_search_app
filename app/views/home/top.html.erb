@@ -21,9 +21,10 @@
           var req = new XMLHttpRequest();
           //検索半径
           var range = document.forms.mainform.elements['range'].value;
-
+          //フリーワード
           var freeword = document.forms.mainform.elements['freeword'].value;
 
+          var id=0;
           url = `https://api.gnavi.co.jp/RestSearchAPI/v3/?keyid=7ac4302e8825cede67d095564843bf46&latitude=${lat}&longitude=${lng}&range=${range}&freeword=${freeword}`
 
           req.responseType = 'json'
@@ -32,16 +33,23 @@
               
           req.onload = ()=>{
             if(req.status==404){
+              //一件もなかった場合
               var li = document.createElement('li');
               document.getElementById("result").appendChild(li).innerHTML = `<li>検索結果がありません</li><br>`;
             }else{
               //周辺10件の店の名前を表示する
+              document.getElementById("result").innerHTML = `<p style="font-size:20px"><span class="text-danger">赤枠</span>のお店はどう？</p>`;
               req.response.rest.forEach((value)=>{
                 var li = document.createElement('li');
+                li.id = id;
                 li.classList.add("border","list-group","border-info","w-75","mt-3","mx-auto","rounded");
                 document.getElementById("result").appendChild(li).innerHTML = `<li style="display:inline;line-height:40px"><h4 class="pt-3">${value.name}</h4><br><img src=${value.image_url.shop_image1}><br>${value.access.walk}分<br>${value.opentime}<br>${value.address}<br><a href="tel:${value.tel}">${value.tel}</a></li>`;
+                id++;
                 console.log(value.name);
+                console.log(value.id);
               });
+              var random =  Math.floor( Math.random() * id );
+              document.getElementById(`${random}`).classList.replace("border-info","border-danger");
             }
           };
 
